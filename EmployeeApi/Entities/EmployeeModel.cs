@@ -10,11 +10,8 @@ namespace EmployeeApi.Entities
         public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string Sex { get; set; }    
+        public  GenderType GenderType { get; set; }         
+        public int? CompanyId { get; set; }      
         
-
-        public int? CompanyId { get; set; }
- 
-        //(Male/Female/Unspecified)
     }
 }

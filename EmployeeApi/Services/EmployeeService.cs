@@ -3,7 +3,7 @@ using EmployeeApi.Entities;
 using EmployeeApi.Repositories;
 using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using System.Threading.Tasks;
 
 
@@ -18,9 +18,21 @@ namespace EmployeeApi.Services
             _employeeRepository = employeeRepository;
             _companyRepository = companyRepository;
         }
-        public async Task<List<EmployeeModel>> GetAllAsync()
+        public async Task<List<UpdateEmployeeDto>> GetAllAsync()
         {
-            return await _employeeRepository.GetAsync();
+            
+            var employeeEntities = await _employeeRepository.GetAsync();
+            var dtos = employeeEntities.Select(e => new UpdateEmployeeDto()
+            {
+                Id = e.Id,
+                FirstName = e.FirstName,
+                LastName = e.LastName,
+                CompanyId = e.CompanyId,
+                GenderType = e.GenderType.ToString()
+
+            });
+
+            return dtos.ToList();
         }
 
         public async Task<EmployeeModel> GetByIdAsync(int id)
@@ -28,18 +40,31 @@ namespace EmployeeApi.Services
             return await _employeeRepository.GetByIdAsync(id);
         }
 
-        public async Task AddAsync(EmployeeModel employee)
+        public async Task <int> AddAsync(CreationEmployeeDto creationEmployeeDto)
         {
-            if (employee.CompanyId.HasValue)
+
+            var genderType = Enum.Parse<GenderType>(creationEmployeeDto.GenderType ?? "Unspecified");
+            var entity = new EmployeeModel()
             {
-                var company = await _companyRepository.GetById(employee.CompanyId.Value);
+                FirstName = creationEmployeeDto.FirstName,
+                LastName = creationEmployeeDto.LastName,
+                GenderType = genderType,
+                CompanyId = creationEmployeeDto.CompanyId
+            };
+
+
+            if (creationEmployeeDto.CompanyId.HasValue)
+            {
+                var company = await _companyRepository.GetById(creationEmployeeDto.CompanyId.Value);
                 if (company == null)
                 {
                     throw new ArgumentException("Employee does not exist");
                 }
             }
 
-            await _employeeRepository.AddAsync(employee);
+            await _employeeRepository.AddAsync(entity);
+
+            return entity.Id;
         }
 
         public async Task DeleteAsync(int id)
@@ -50,12 +75,13 @@ namespace EmployeeApi.Services
 
         public async Task UpdateAsync(UpdateEmployeeDto employee)
         {
+            var genderType = Enum.Parse<GenderType>(employee.GenderType ?? "Unspecified");
             EmployeeModel entity = new EmployeeModel
             {
                 Id = employee.Id,
                 FirstName = employee.FirstName,
                 LastName = employee.LastName,
-                Sex = employee.Sex,
+                GenderType = genderType,
                 CompanyId = employee.CompanyId
 
             };

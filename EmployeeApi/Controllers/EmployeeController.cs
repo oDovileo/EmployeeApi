@@ -1,5 +1,4 @@
 ﻿using EmployeeApi.Dtos;
-using EmployeeApi.Entities;
 using EmployeeApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -25,16 +24,21 @@ namespace EmployeeApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult> GetById(int id)
         {
-            var point = await _employeeService.GetByIdAsync(id);
-            return Ok(point);
+            var employee = await _employeeService.GetByIdAsync(id);
+            if (employee == null)
+            {
+                return NotFound();
+            }
+            return Ok(employee);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(EmployeeModel employee)
+        public async Task<IActionResult> Add(CreationEmployeeDto employee)
         {
-            await _employeeService.AddAsync(employee);
+            //var id = await _employeeService.AddAsync(employee);
 
-            return NoContent();
+            //return Ok(employee.Id);
+            return Ok(await _employeeService.AddAsync(employee));
         }
 
         [HttpDelete("{id}")]

@@ -9,10 +9,8 @@ namespace EmployeeApi.Dtos
     {
         public int Id { get; set; }
         public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Sex { get; set; }
-
-
+        public string LastName { get; set; }       
         public int? CompanyId { get; set; }
+        public string GenderType { get; internal set; }
     }
 }

@@ -23,7 +23,7 @@ namespace EmployeeApi.Repositories
 
         public async Task<EmployeeModel> GetByIdAsync(int id)
         {
-            return await _context.Employees.FirstOrDefaultAsync(p => p.Id == id);
+            return await _context.Employees.FirstOrDefaultAsync(e => e.Id == id);
         }
         public async Task AddAsync(EmployeeModel employee)
         {
