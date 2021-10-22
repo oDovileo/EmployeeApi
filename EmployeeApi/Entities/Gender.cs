@@ -9,6 +9,6 @@ namespace EmployeeApi.Entities
     {
         Male,
         Female,
-        Unspeciied
+        Unspecified
     }
 }
